@@ -21,8 +21,7 @@ class TicketControl extends React.Component {
   componentDidMount() {
     this.waitTimeUpdateTimer = setInterval(() =>
       this.updateTicketElapsedWaitTime(),
-    3000 //only difference i can find 
-          // pfft I dug through everything and I can't find something wrong with it
+    60000
     );
   }
 
@@ -32,7 +31,7 @@ class TicketControl extends React.Component {
 
   updateTicketElapsedWaitTime = () => {
     const { dispatch } = this.props;
-    Object.values(this.props.masterTicketlist).forEach(ticket => {
+    Object.values(this.props.masterTicketList).forEach(ticket => {
       const newFormattedWaitTime = ticket.timeOpen.fromNow(true);
       const action = a.updateTime(ticket.id, newFormattedWaitTime);
       dispatch(action);
