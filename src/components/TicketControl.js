@@ -21,21 +21,22 @@ class TicketControl extends React.Component {
   componentDidMount() {
     this.waitTimeUpdateTimer = setInterval(() =>
       this.updateTicketElapsedWaitTime(),
-    1000
+    3000 //only difference i can find 
+          // pfft I dug through everything and I can't find something wrong with it
     );
   }
 
-  componentDidUpdate() {
-    console.log('component updated!');
-  }
-
   componentWillUnmount() {
-    console.log('component unmounted!');
     clearInterval(this.waitTimeUpdateTimer);
   }
 
   updateTicketElapsedWaitTime = () => {
-    console.log('tick');
+    const { dispatch } = this.props;
+    Object.values(this.props.masterTicketlist).forEach(ticket => {
+      const newFormattedWaitTime = ticket.timeOpen.fromNow(true);
+      const action = a.updateTime(ticket.id, newFormattedWaitTime);
+      dispatch(action);
+    });
   }
 
   handleClick = () => {
@@ -90,7 +91,7 @@ class TicketControl extends React.Component {
     let currentlyVisibleState = null;
     let buttonText = null;
 
-    if (this.state.editing ) {      
+    if (this.state.editing) {      
       currentlyVisibleState = <EditTicketForm
       ticket={this.state.selectedTicket}
       onEditTicket={this.handleEditingTicketInList} />
@@ -112,6 +113,7 @@ class TicketControl extends React.Component {
       currentlyVisibleState = <TicketList ticketList={this.props.masterTicketList} onTicketSelection={this.handleChangingSelectedTicket} />;
       buttonText = 'Add Ticket';
     }
+
     return (
       <React.Fragment>
         {currentlyVisibleState}
