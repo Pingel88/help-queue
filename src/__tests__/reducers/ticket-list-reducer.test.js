@@ -1,14 +1,10 @@
 import ticketListReducer from '../../reducers/ticket-list-reducer';
+import Moment from 'moment';
 import * as c from './../../actions/ActionTypes';
 
 describe('ticketListReducer', () => {
+
   let action;
-  const ticketData = {
-    names: 'Ryan & Aimen',
-    location: '4b',
-    issue: 'Redux action is not working correctly.',
-    id: 1
-  };
 
   const currentState = {
     1: {names: 'Ryan & Aimen',
@@ -21,18 +17,28 @@ describe('ticketListReducer', () => {
     id: 2 }
   };
 
+  const ticketData = {
+    names: 'Ryan & Aimen',
+    location: '4b',
+    issue: 'Redux action is not working correctly.',
+    timeOpen: 0,
+    id: 1
+  };
+
   test('Should return default state if there is no action type passed into the reducer', () => {
     expect(ticketListReducer({}, { type: null })).toEqual({});
   });
 
   test('Should successfully add new ticket data to masterTicketList', () => {
-    const { names, location, issue, id } = ticketData;
+    const { names, location, issue, id, timeOpen } = ticketData;
     action = {
       type: c.ADD_TICKET,
       names: names,
       location: location,
       issue: issue,
-      id: id
+      timeOpen: timeOpen,
+      id: id,
+      formattedWaitTime: new Moment().fromNow(true)
     };
 
     expect(ticketListReducer({}, action)).toEqual({
@@ -40,7 +46,9 @@ describe('ticketListReducer', () => {
         names: names,
         location: location,
         issue: issue,
-        id: id
+        timeOpen: timeOpen,
+        id: id,
+        formattedWaitTime: 'a few seconds'
       }
     });
   });
@@ -57,4 +65,23 @@ describe('ticketListReducer', () => {
         id: 2 }
     });
   });
+
+  test('Should add a formatted wait time to ticket entry', () => {
+    const { names, location, issue, timeOpen, id } = ticketData;
+    action = {
+      type: c.UPDATE_TIME,
+      formattedWaitTime: '4 minutes',
+      id: id
+    };
+    expect(ticketListReducer({ [id]: ticketData }, action)).toEqual({
+      [id]: {
+        names: names,
+        location: location,
+        issue: issue,
+        timeOpen: timeOpen,
+        id: id,
+        formattedWaitTime: '4 minutes'
+      }
+    })
+  })
 });
